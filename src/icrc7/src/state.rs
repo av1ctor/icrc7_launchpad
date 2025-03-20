@@ -585,11 +585,13 @@ impl State {
                 });
             }
         }
-        if &arg.token_id < &self.next_token_id {
-            return Err(MintError::TokenIdMinimumLimit);
-        }
-        if let Some(_) = self.tokens.get(&arg.token_id) {
-            return Err(MintError::TokenIdAlreadyExist);
+        if let Some(token_id) = arg.token_id {
+            if token_id < self.next_token_id {
+                return Err(MintError::TokenIdMinimumLimit);
+            }
+            if let Some(_) = self.tokens.get(&token_id) {
+                return Err(MintError::TokenIdAlreadyExist);
+            }
         }
         Ok(())
     }
@@ -601,25 +603,26 @@ impl State {
         });
         arg.to = account_transformer(arg.to);
         self.mock_mint(&caller, &arg)?;
+        let token_id = arg.token_id.unwrap_or(self.next_token_id);
         let token_name = arg.token_name.unwrap_or_else(|| {
-            let name = format!("{} {}", self.icrc7_symbol, arg.token_id);
+            let name = format!("{} {}", self.icrc7_symbol, token_id);
             name
         });
         let token = Icrc7Token::new(
-            arg.token_id,
+            token_id,
             token_name.clone(),
             arg.token_description.clone(),
             arg.token_logo,
             arg.to.clone(),
         );
         let token_metadata = token.token_metadata();
-        self.tokens.insert(arg.token_id, token);
+        self.tokens.insert(token_id, token);
         self.icrc7_total_supply += 1;
-        self.next_token_id = arg.token_id + 1;
+        self.next_token_id = token_id + 1;
 
         let txn_id = self.log_transaction(
             TransactionType::Mint {
-                tid: arg.token_id,
+                tid: token_id,
                 from: caller,
                 to: arg.to,
                 meta: token_metadata,
