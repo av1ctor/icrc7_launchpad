@@ -1518,7 +1518,7 @@ impl State {
                 None => vec![],
                 Some(index) => owned_tokens
                     .iter()
-                    .skip(index)
+                    .skip(index+1)
                     .take(take as usize)
                     .cloned()
                     .collect(),
