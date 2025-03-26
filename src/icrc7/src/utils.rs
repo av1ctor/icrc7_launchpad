@@ -41,6 +41,7 @@ pub fn hash_icrc_value(value: &Value) -> generic_value::Hash {
 
 pub fn principal_to_subaccount(prin: &Principal) -> Subaccount {
     let mut bytes = [0; 32];
-    bytes.copy_from_slice(&prin.to_bytes());
+    let src = prin.to_bytes();
+    bytes[0..src.len()].copy_from_slice(&src);
     bytes
 }
