@@ -1,6 +1,6 @@
 use candid::{CandidType, Encode, Principal};
 use ic_cdk::api::management_canister::{
-    main::{create_canister, install_code, CreateCanisterArgument, InstallCodeArgument},
+    main::{create_canister, install_code, CreateCanisterArgument, InstallCodeArgument, LogVisibility},
     provisional::CanisterSettings,
 };
 use ic_cdk_macros::update;
@@ -91,6 +91,8 @@ async fn mint_collection_canister(arg: Arg) -> Result<Principal, String> {
                 memory_allocation: None,
                 freezing_threshold: None,
                 reserved_cycles_limit: None,
+                wasm_memory_limit: None,
+                log_visibility: Some(LogVisibility::Public),
             }),
         },
         10_000_000_000_000,

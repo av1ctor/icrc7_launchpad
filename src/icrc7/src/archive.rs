@@ -1,6 +1,6 @@
 use candid::{CandidType, Deserialize, Encode, Principal};
 use ic_cdk::api::management_canister::{
-    main::{create_canister, install_code, CreateCanisterArgument, InstallCodeArgument},
+    main::{create_canister, install_code, CreateCanisterArgument, InstallCodeArgument, LogVisibility},
     provisional::CanisterSettings,
 };
 use serde::Serialize;
@@ -49,6 +49,8 @@ pub async fn create_archive_canister(arg: ArchiveCreateArgs) -> Result<Principal
                 memory_allocation: None,
                 freezing_threshold: None,
                 reserved_cycles_limit: None,
+                wasm_memory_limit: None,
+                log_visibility: Some(LogVisibility::Public),
             }),
         },
         ARCHIVE_DEFAULT_CYCLES,
