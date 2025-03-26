@@ -1494,7 +1494,7 @@ impl State {
         prev: Option<u128>,
         take: Option<u128>,
     ) -> Vec<u128> {
-        let take = take.unwrap_or(State::DEFAULT_TAKE_VALUE);
+        let mut take = take.unwrap_or(State::DEFAULT_TAKE_VALUE);
         if take > State::DEFAULT_MAX_TAKE_VALUE {
             ic_cdk::trap("Exceeds Max Take Value")
         }
@@ -1504,16 +1504,23 @@ impl State {
                 owned_tokens.push(id);
             }
         }
+
+        if owned_tokens.len() == 0 {
+            return vec![];
+        }
+
+        take = std::cmp::min(take, owned_tokens.len() as u128);
+
         owned_tokens.sort();
         match prev {
-            None => owned_tokens[0..=take as usize].to_vec(),
+            None => owned_tokens[0..take as usize].to_vec(),
             Some(prev) => match owned_tokens.iter().position(|id| *id == prev) {
                 None => vec![],
                 Some(index) => owned_tokens
                     .iter()
-                    .map(|id| *id)
                     .skip(index)
                     .take(take as usize)
+                    .cloned()
                     .collect(),
             },
         }
