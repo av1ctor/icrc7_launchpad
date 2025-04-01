@@ -29,6 +29,8 @@ pub fn mint_with_approval(arg: MintArg) -> MintResult {
     let minting_authority = STATE.with_borrow(|s| 
         s.minting_authority.unwrap()
     );
+
+    let owner = arg.to.owner.clone();
     
     // 1st: try to mint (only the minting authority is allowed)
     let token_id = mint(arg)?;
@@ -45,7 +47,7 @@ pub fn mint_with_approval(arg: MintArg) -> MintResult {
         )
     }];
 
-    STATE.with(|s| s.borrow_mut().approve(&ic_cdk::caller(), args));
+    STATE.with(|s| s.borrow_mut().approve(&owner, args));
 
     Ok(token_id)
 }
