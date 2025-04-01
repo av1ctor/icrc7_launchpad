@@ -26,11 +26,9 @@ pub fn mint(arg: MintArg) -> MintResult {
 
 #[update]
 pub fn mint_with_approval(arg: MintArg) -> MintResult {
-    let minting_authority = Account { 
-        owner: STATE.with_borrow(|s| s.minting_authority.unwrap().owner), 
-        // use the owner's principal as subaccount
-        subaccount: Some(principal_to_subaccount(arg.to.owner))
-    };
+    let minting_authority = STATE.with_borrow(|s| 
+        s.minting_authority.unwrap()
+    );
     
     // 1st: try to mint (only the minting authority is allowed)
     let token_id = mint(arg)?;
