@@ -1,11 +1,10 @@
 use candid::Principal;
 use ic_cdk_macros::update;
-
 use crate::{
-    guards::owner_guard, icrc37_types::{ApprovalInfo, ApproveTokenArg}, state::STATE, utils::principal_to_subaccount, 
+    guards::owner_guard, icrc37_types::{ApprovalInfo, ApproveTokenArg}, state::STATE, 
     BurnArg, BurnResult, MintArg, MintResult, TransferArg, TransferResult
 };
-use icrc_ledger_types::icrc1::account::Account;
+use icrc_ledger_types::icrc1::account::{principal_to_subaccount, Account};
 
 #[update]
 pub fn icrc7_transfer(args: Vec<TransferArg>) -> Vec<Option<TransferResult>> {
@@ -30,7 +29,7 @@ pub fn mint_with_approval(arg: MintArg) -> MintResult {
     let minting_authority = Account { 
         owner: STATE.with_borrow(|s| s.minting_authority.unwrap().owner), 
         // use the owner's principal as subaccount
-        subaccount: Some(principal_to_subaccount(&arg.to.owner))
+        subaccount: Some(principal_to_subaccount(arg.to.owner))
     };
     
     // 1st: try to mint (only the minting authority is allowed)

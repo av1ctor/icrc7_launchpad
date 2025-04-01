@@ -1,5 +1,4 @@
 use candid::Principal;
-use ic_stable_structures::Storable;
 use icrc_ledger_types::icrc::generic_value::{self, Value};
 use icrc_ledger_types::icrc1::account::{Account, Subaccount, DEFAULT_SUBACCOUNT};
 
@@ -37,11 +36,4 @@ pub fn burn_account() -> Account {
 
 pub fn hash_icrc_value(value: &Value) -> generic_value::Hash {
     return value.hash();
-}
-
-pub fn principal_to_subaccount(prin: &Principal) -> Subaccount {
-    let mut bytes = [0; 32];
-    let src = prin.to_bytes();
-    bytes[0..src.len()].copy_from_slice(&src);
-    bytes
 }
