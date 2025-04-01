@@ -4,7 +4,7 @@ use crate::{
     guards::owner_guard, icrc37_types::{ApprovalInfo, ApproveTokenArg}, state::STATE, 
     BurnArg, BurnResult, MintArg, MintResult, TransferArg, TransferResult
 };
-use icrc_ledger_types::icrc1::account::{principal_to_subaccount, Account};
+use icrc_ledger_types::icrc1::account::Account;
 
 #[update]
 pub fn icrc7_transfer(args: Vec<TransferArg>) -> Vec<Option<TransferResult>> {
