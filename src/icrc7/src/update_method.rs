@@ -46,7 +46,7 @@ pub fn transfer_from_and_grant_transfer_approval(
     arg: TransferFromArg
 ) -> TransferFromResult {
     let caller = ic_cdk::caller();
-    let owner = arg.from.owner.clone();
+    let owner = arg.to.owner.clone();
 
     // 1st: do the transfer to the new account
     let res = STATE.with_borrow_mut(|s| {
