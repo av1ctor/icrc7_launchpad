@@ -634,7 +634,7 @@ impl State {
             ic_cdk::api::time(),
             arg.memo,
         );
-        Ok(txn_id)
+        Ok((txn_id, token_id))
     }
 
     fn mock_burn(&self, caller: &Account, arg: &BurnArg) -> Result<(), BurnError> {

@@ -343,7 +343,7 @@ pub struct MintArg {
     pub token_logo: Option<String>,
 }
 
-pub type MintResult = Result<u128, MintError>;
+pub type MintResult = Result<(u128, u128), MintError>;
 
 #[derive(CandidType, Deserialize, Clone)]
 pub struct BurnArg {
