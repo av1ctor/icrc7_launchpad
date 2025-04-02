@@ -1,4 +1,3 @@
-use candid::Principal;
 use ic_cdk_macros::update;
 use crate::{
     icrc37_types::{ApprovalInfo, ApproveTokenArg}, 
