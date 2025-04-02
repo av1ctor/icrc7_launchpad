@@ -286,32 +286,36 @@ impl State {
         caller: &Account,
         args: &TransferArg,
     ) -> Result<(), TransferError> {
-        let mut count = self.txn_count;
-        while count != 0 {
-            let txn = self.txn_ledger.get(&count).unwrap();
-            if txn.ts < *allowed_past_time {
-                return Ok(());
-            }
-            if txn.op == String::from(TRANSACTION_TRANSFER_OP)
-                || txn.op == String::from(TRANSACTION_TRANSFER_FROM_OP)
-            {
-                if args.token_id == txn.tid
-                    && caller == txn.from.as_ref().unwrap()
-                    && args.to == txn.to.unwrap()
-                    && args.memo == txn.memo
-                    && args.created_at_time == Some(txn.ts)
-                {
-                    return Err(TransferError::Duplicate {
-                        duplicate_of: count,
-                    });
-                } else {
-                    count -= 1;
-                    continue;
+        if self.txn_count == 0 {
+            return Ok(());
+        }
+
+        let mut tx_id = self.txn_count - 1;
+        loop {
+            if let Some(txn) = self.txn_ledger.get(&tx_id) {
+                if txn.ts < *allowed_past_time {
+                    return Ok(());
                 }
-            } else {
-                count -= 1;
-                continue;
+                if txn.op == String::from(TRANSACTION_TRANSFER_OP)
+                    || txn.op == String::from(TRANSACTION_TRANSFER_FROM_OP)
+                {
+                    if args.token_id == txn.tid
+                        && caller == txn.from.as_ref().unwrap()
+                        && args.to == txn.to.unwrap()
+                        && args.memo == txn.memo
+                        && args.created_at_time == Some(txn.ts)
+                    {
+                        return Err(TransferError::Duplicate {
+                            duplicate_of: tx_id,
+                        });
+                    }
+                }
             }
+
+            if tx_id == 0 {
+                break;
+            }
+            tx_id -= 1;
         }
         Ok(())
     }
