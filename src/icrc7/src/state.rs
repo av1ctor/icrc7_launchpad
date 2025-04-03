@@ -121,7 +121,6 @@ pub struct State {
     #[serde(skip, default = "get_token_map_memory")]
     pub tokens: StableBTreeMap<u128, Icrc7Token, Memory>,
     pub txn_count: u128,
-    pub next_token_id: u128,
 
     pub approval_ledger_info: LedgerInfo,
     #[serde(skip, default = "get_token_approvals_memory")]
@@ -157,7 +156,6 @@ impl Default for State {
             permitted_drift: None,
             tokens: get_token_map_memory(),
             txn_count: 0,
-            next_token_id: 0,
             txn_ledger: get_log_memory(),
             archive_log_canister: None,
             sync_pending_txn_ids: None,
@@ -589,13 +587,8 @@ impl State {
                 });
             }
         }
-        if let Some(token_id) = arg.token_id {
-            if token_id < self.next_token_id {
-                return Err(MintError::TokenIdMinimumLimit);
-            }
-            if let Some(_) = self.tokens.get(&token_id) {
-                return Err(MintError::TokenIdAlreadyExist);
-            }
+        if let Some(_) = self.tokens.get(&arg.token_id) {
+            return Err(MintError::TokenIdAlreadyExist);
         }
         Ok(())
     }
@@ -607,7 +600,7 @@ impl State {
         });
         arg.to = account_transformer(arg.to);
         self.mock_mint(&caller, &arg)?;
-        let token_id = arg.token_id.unwrap_or(self.next_token_id);
+        let token_id = arg.token_id;
         let token_name = arg.token_name.unwrap_or_else(|| {
             let name = format!("{} {}", self.icrc7_symbol, token_id);
             name
@@ -622,7 +615,6 @@ impl State {
         let token_metadata = token.token_metadata();
         self.tokens.insert(token_id, token);
         self.icrc7_total_supply += 1;
-        self.next_token_id = token_id + 1;
 
         let txn_id = self.log_transaction(
             TransactionType::Mint {
