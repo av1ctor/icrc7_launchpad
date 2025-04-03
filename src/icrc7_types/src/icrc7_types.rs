@@ -336,11 +336,7 @@ pub struct MintArg {
     pub to: Account,
     pub token_id: u128,
     pub memo: Option<Vec<u8>>,
-    // if None, then the combination of Collection's symbol and token's id will be provided
-    // for e.g.: "ICRC7 100"
-    pub token_name: Option<String>,
-    pub token_description: Option<String>,
-    pub token_logo: Option<String>,
+    pub meta: Icrc7TokenMetadata,
 }
 
 pub type MintResult = Result<(u128, u128), MintError>;

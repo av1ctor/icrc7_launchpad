@@ -44,10 +44,8 @@ use serde_bytes::ByteBuf;
 #[derive(CandidType, Serialize, Deserialize, Clone)]
 pub struct Icrc7Token {
     pub token_id: u128,
-    pub token_name: String,
-    pub token_description: Option<String>,
-    pub token_logo: Option<String>,
     pub token_owner: Account,
+    pub token_meta: Icrc7TokenMetadata,
 }
 
 impl Storable for Icrc7Token {
@@ -65,17 +63,13 @@ impl Storable for Icrc7Token {
 impl Icrc7Token {
     fn new(
         token_id: u128,
-        token_name: String,
-        token_description: Option<String>,
-        token_logo: Option<String>,
         token_owner: Account,
+        meta: Icrc7TokenMetadata
     ) -> Self {
         Self {
             token_id,
-            token_name,
-            token_logo,
             token_owner,
-            token_description,
+            token_meta: meta,
         }
     }
 
@@ -84,16 +78,7 @@ impl Icrc7Token {
     }
 
     fn token_metadata(&self) -> Icrc7TokenMetadata {
-        let mut metadata = BTreeMap::<String, Value>::new();
-        metadata.insert("Name".into(), Value::Text(self.token_name.clone()));
-        metadata.insert("Symbol".into(), Value::Text(self.token_name.clone()));
-        if let Some(ref description) = self.token_description {
-            metadata.insert("Description".into(), Value::Text(description.clone()));
-        }
-        if let Some(ref logo) = self.token_logo {
-            metadata.insert("Logo".into(), Value::Text(logo.clone()));
-        }
-        metadata
+        self.token_meta.clone()
     }
 
     fn burn(&mut self, burn_address: Account) {
@@ -601,18 +586,11 @@ impl State {
         arg.to = account_transformer(arg.to);
         self.mock_mint(&caller, &arg)?;
         let token_id = arg.token_id;
-        let token_name = arg.token_name.unwrap_or_else(|| {
-            let name = format!("{} {}", self.icrc7_symbol, token_id);
-            name
-        });
         let token = Icrc7Token::new(
             token_id,
-            token_name.clone(),
-            arg.token_description.clone(),
-            arg.token_logo,
             arg.to.clone(),
+            arg.meta.clone()
         );
-        let token_metadata = token.token_metadata();
         self.tokens.insert(token_id, token);
         self.icrc7_total_supply += 1;
 
@@ -621,7 +599,7 @@ impl State {
                 tid: token_id,
                 from: caller,
                 to: arg.to,
-                meta: token_metadata,
+                meta: arg.meta,
             },
             ic_cdk::api::time(),
             arg.memo,
