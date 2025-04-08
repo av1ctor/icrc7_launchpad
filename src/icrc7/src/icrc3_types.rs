@@ -182,11 +182,11 @@ impl ArchiveLedgerInfo {
             setting,
             supported_blocks: vec![
                 BlockType {
-                    block_type: "1mint".into(),
+                    block_type: "7mint".into(),
                     url: "https://github.com/dfinity/ICRC/blob/main/ICRCs/ICRC-7/ICRC-7.md".into(),
                 },
                 BlockType {
-                    block_type: "1burn".into(),
+                    block_type: "7burn".into(),
                     url: "https://github.com/dfinity/ICRC/blob/main/ICRCs/ICRC-7/ICRC-7.md".into(),
                 },
                 BlockType {
