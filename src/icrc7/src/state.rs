@@ -342,7 +342,7 @@ impl State {
             let mut tree = tree.borrow_mut();
             tree.insert(
                 "last_block_index",
-                leaf_hash(&self.archive_ledger_info.last_index.to_be_bytes()),
+                leaf_hash(&self.archive_ledger_info.last_index.to_le_bytes()),
             );
             tree.insert("last_block_hash", leaf_hash(&block_hash));
             ic_cdk::api::set_certified_data(&tree.root_hash());
@@ -1713,7 +1713,7 @@ impl State {
         });
         return Tip {
             last_block_hash: self.archive_ledger_info.latest_hash.unwrap(),
-            last_block_index: self.archive_ledger_info.last_index.to_be_bytes().to_vec(),
+            last_block_index: self.archive_ledger_info.last_index.to_le_bytes().to_vec(),
             hash_tree: witness,
         };
     }
