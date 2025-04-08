@@ -66,7 +66,7 @@ pub enum TransactionType {
 #[derive(CandidType, Serialize, Deserialize, Debug, Clone, Default)]
 pub struct Transaction {
     pub ts: u64,
-    pub op: String, // "7mint" | "7burn" | "7xfer" | "7update" | "37appr" | "37appr_coll | "37revoke" | "37revoke_coll" | "37xfer"
+    pub op: String, // "1mint" | "1burn" | "7xfer" | "7update" | "37appr" | "37appr_coll | "37revoke" | "37revoke_coll" | "37xfer"
     pub tid: u128,
     pub from: Option<Account>,
     pub to: Option<Account>,
@@ -88,7 +88,7 @@ impl Transaction {
     ) -> Self {
         Transaction {
             ts: now_sec,
-            op: "7mint".to_string(),
+            op: "1mint".to_string(),
             tid,
             from,
             to: Some(to),
@@ -107,7 +107,7 @@ impl Transaction {
     ) -> Self {
         Transaction {
             ts: now_sec,
-            op: "7burn".to_string(),
+            op: "1burn".to_string(),
             tid,
             from: Some(from),
             to,
