@@ -21,7 +21,7 @@ pub enum BurnError {
     GenericBatchError { error_code: u128, message: String },
 }
 
-#[derive(CandidType, Clone, Deserialize)]
+#[derive(CandidType, Debug, Clone, Deserialize)]
 pub enum MintError {
     SupplyCapReached,
     Unauthorized,
