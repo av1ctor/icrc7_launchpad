@@ -475,6 +475,7 @@ dependencies = [
  "ic-certified-map",
  "ic-stable-structures",
  "icrc-ledger-types",
+ "icrc7-types",
  "serde",
  "serde_bytes",
  "serde_cbor",

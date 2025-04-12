@@ -1,12 +1,12 @@
-use crate::{
-    icrc37_types::{CollectionApprovalInfo, TokenApprovalInfo, UserAccount},
-    icrc7_types::Transaction,
-    state::{Icrc7Token, MEMORY_MANAGER},
-};
 use ic_stable_structures::{
     memory_manager::{MemoryId, VirtualMemory},
     DefaultMemoryImpl, StableBTreeMap,
 };
+use icrc7_types::{
+    icrc37_types::{CollectionApprovalInfo, TokenApprovalInfo, UserAccount},
+    icrc7_types::Transaction
+};
+use crate::state::{Icrc7Token, MEMORY_MANAGER};
 
 // A memory for upgrades, where data from the heap can be serialized/deserialized.
 const UPGRADES: MemoryId = MemoryId::new(0);

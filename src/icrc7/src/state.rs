@@ -1,11 +1,5 @@
 use std::{cell::RefCell, collections::BTreeMap, time::Duration};
-
-use crate::{
-    archive::create_archive_canister,
-    errors::{
-        ApproveCollectionError, ApproveTokenError, BurnError, InsertTransactionError, MintError,
-        RevokeCollectionApprovalError, RevokeTokenApprovalError, TransferError, TransferFromError,
-    },
+use icrc7_types::{
     icrc37_types::{
         ApproveCollectionArg, ApproveCollectionResult, ApproveTokenArg, ApproveTokenResult,
         CollectionApproval, CollectionApprovalInfo, IsApprovedArg, LedgerInfo, Metadata,
@@ -21,13 +15,21 @@ use crate::{
     icrc7_types::{
         BurnResult, Icrc7TokenMetadata, MintArg, MintResult, Transaction, TransactionType,
         TransferArg, TransferResult,
+        BurnArg, SyncReceipt, TRANSACTION_TRANSFER_FROM_OP, TRANSACTION_TRANSFER_OP,
     },
+    errors::{
+        ApproveCollectionError, ApproveTokenError, BurnError, InsertTransactionError, MintError,
+        RevokeCollectionApprovalError, RevokeTokenApprovalError, TransferError, TransferFromError,
+    },
+};
+use crate::{
+    archive::create_archive_canister,
     memory::{
         get_collection_approvals_memory, get_log_memory, get_token_approvals_memory,
         get_token_map_memory, Memory,
     },
     utils::{account_transformer, burn_account, hash_icrc_value},
-    BurnArg, SyncReceipt, TRANSACTION_TRANSFER_FROM_OP, TRANSACTION_TRANSFER_OP,
+    
 };
 use candid::{CandidType, Decode, Encode, Principal};
 use ic_cdk_timers::TimerId;
@@ -106,6 +108,7 @@ pub struct State {
     #[serde(skip, default = "get_token_map_memory")]
     pub tokens: StableBTreeMap<u128, Icrc7Token, Memory>,
     pub txn_count: u128,
+    pub next_token_id: u128,
 
     pub approval_ledger_info: LedgerInfo,
     #[serde(skip, default = "get_token_approvals_memory")]
@@ -141,6 +144,7 @@ impl Default for State {
             permitted_drift: None,
             tokens: get_token_map_memory(),
             txn_count: 0,
+            next_token_id: 0,
             txn_ledger: get_log_memory(),
             archive_log_canister: None,
             sync_pending_txn_ids: None,
@@ -572,8 +576,13 @@ impl State {
                 });
             }
         }
-        if let Some(_) = self.tokens.get(&arg.token_id) {
-            return Err(MintError::TokenIdAlreadyExist);
+        if let Some(token_id) = arg.token_id {
+            if token_id < self.next_token_id {
+                return Err(MintError::TokenIdMinimumLimit);
+            }
+            if let Some(_) = self.tokens.get(&token_id) {
+                return Err(MintError::TokenIdAlreadyExist);
+            }
         }
         Ok(())
     }
@@ -585,7 +594,7 @@ impl State {
         });
         arg.to = account_transformer(arg.to);
         self.mock_mint(&caller, &arg)?;
-        let token_id = arg.token_id;
+        let token_id = arg.token_id.unwrap_or(self.next_token_id);
         let token = Icrc7Token::new(
             token_id,
             arg.to.clone(),
@@ -593,6 +602,7 @@ impl State {
         );
         self.tokens.insert(token_id, token);
         self.icrc7_total_supply += 1;
+        self.next_token_id = token_id + 1;
 
         let txn_id = self.log_transaction(
             TransactionType::Mint {

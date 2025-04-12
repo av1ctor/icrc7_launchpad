@@ -13,7 +13,7 @@ pub enum TransferError {
     GenericBatchError { error_code: u128, message: String },
 }
 
-#[derive(CandidType, Debug, Deserialize, Clone)]
+#[derive(CandidType, Clone)]
 pub enum BurnError {
     Unauthorized,
     NonExistingTokenId,
@@ -21,11 +21,12 @@ pub enum BurnError {
     GenericBatchError { error_code: u128, message: String },
 }
 
-#[derive(CandidType, Debug, Deserialize, Clone)]
+#[derive(CandidType, Clone)]
 pub enum MintError {
     SupplyCapReached,
     Unauthorized,
     TokenIdAlreadyExist,
+    TokenIdMinimumLimit,
     GenericError { error_code: u128, message: String },
     GenericBatchError { error_code: u128, message: String },
 }

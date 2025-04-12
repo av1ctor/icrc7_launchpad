@@ -1,7 +1,6 @@
 use ic_cdk_macros::query;
-
-use crate::icrc3_types::{
-    BlockType, GetArchiveArgs, GetArchivesResultItem, GetBlocksArgs, GetBlocksResult, Tip,
+use icrc7_types::icrc3_types::{
+    BlockType, GetArchiveArgs, GetArchivesResultItem, GetBlocksArgs, GetBlocksResult, Tip
 };
 use crate::state::STATE;
 use icrc_ledger_types::icrc3::blocks::DataCertificate;

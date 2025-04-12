@@ -1,8 +1,8 @@
 use candid::Principal;
 use ic_cdk_macros::query;
 use icrc_ledger_types::icrc1::account::Account;
-
-use crate::{icrc7_types::Transaction, state::STATE, Icrc7TokenMetadata, Standard};
+use icrc7_types::icrc7_types::{Transaction, Icrc7TokenMetadata, Standard};
+use crate::state::STATE;
 
 #[query]
 pub fn icrc7_symbol() -> String {

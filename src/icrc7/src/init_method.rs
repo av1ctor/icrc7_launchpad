@@ -1,9 +1,13 @@
 use ic_cdk_macros::{init, post_upgrade, pre_upgrade};
 use ic_stable_structures::{writer::Writer, Memory};
 use icrc_ledger_types::icrc1::account::Account;
-
+use icrc7_types::{
+    icrc37_types::LedgerInfo, 
+    icrc3_types::ArchiveLedgerInfo, 
+    icrc7_types::InitArg
+};
 use crate::{
-    icrc37_types::LedgerInfo, icrc3_types::ArchiveLedgerInfo, icrc7_types::InitArg, state::STATE,
+    state::STATE,
     utils::account_transformer,
 };
 

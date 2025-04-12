@@ -334,7 +334,7 @@ pub type Icrc7TokenMetadata = BTreeMap<String, Value>;
 pub struct MintArg {
     pub from_subaccount: Option<Subaccount>,
     pub to: Account,
-    pub token_id: u128,
+    pub token_id: Option<u128>,
     pub memo: Option<Vec<u8>>,
     pub meta: Icrc7TokenMetadata,
 }

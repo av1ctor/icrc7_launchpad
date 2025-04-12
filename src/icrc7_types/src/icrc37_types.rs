@@ -1,5 +1,4 @@
 use std::collections::BTreeMap;
-
 use candid::{CandidType, Decode, Encode};
 use ic_stable_structures::{storable::Bound, Storable};
 use icrc_ledger_types::{
@@ -7,11 +6,10 @@ use icrc_ledger_types::{
     icrc1::account::{Account, Subaccount},
 };
 use serde::{Deserialize, Serialize};
-
-use crate::errors::{
+use crate::{errors::{
     ApproveCollectionError, ApproveTokenError, RevokeCollectionApprovalError,
     RevokeTokenApprovalError, TransferFromError,
-};
+}, icrc7_types::TransferArg};
 
 pub type Metadata = Map;
 
@@ -49,6 +47,18 @@ pub struct LedgerInfo {
     pub max_approvals: u16,
     pub settle_to_approvals: u16,
     pub collection_approval_requires_token: bool,
+}
+
+impl Default for LedgerInfo {
+    fn default() -> Self {
+        Self {
+            max_approvals_per_token_or_collection: 10000,
+            max_revoke_approvals: 10000,
+            max_approvals: 10000,
+            settle_to_approvals: 9975,
+            collection_approval_requires_token: true,
+        }
+    }
 }
 
 #[derive(CandidType, Serialize, Deserialize, Debug, Clone)]
@@ -272,6 +282,18 @@ pub struct TransferFromArg {
     pub token_id: u128,
     pub memo: Option<Vec<u8>>,
     pub created_at_time: Option<u64>,
+}
+
+impl Into<TransferArg> for TransferFromArg {
+    fn into(self) -> TransferArg {
+        TransferArg {
+            from_subaccount: self.spender_subaccount,
+            to: self.to,
+            token_id: self.token_id,
+            memo: self.memo,
+            created_at_time: self.created_at_time,
+        }
+    }
 }
 
 pub type TransferFromResult = Result<u128, TransferFromError>;

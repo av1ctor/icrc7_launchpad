@@ -1,15 +1,19 @@
 use candid::Principal;
 use ic_cdk_macros::update;
-use crate::{
-    errors::TransferFromError, 
-    guards::authenticated_guard, 
+use icrc7_types::{
     icrc37_types::{
         ApprovalInfo, ApproveTokenArg, 
         TransferFromArg, TransferFromResult
     }, 
+    icrc7_types::{
+        BurnArg, BurnResult, MintArg, MintResult, 
+        TransferArg, TransferResult
+    },
+    errors::TransferFromError, 
+};
+use crate::{
+    guards::authenticated_guard, 
     state::STATE, 
-    BurnArg, BurnResult, MintArg, MintResult, 
-    TransferArg, TransferResult
 };
 
 #[update(guard = "authenticated_guard")]

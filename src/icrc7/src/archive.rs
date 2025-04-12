@@ -3,9 +3,8 @@ use ic_cdk::api::management_canister::{
     main::{create_canister, install_code, CreateCanisterArgument, InstallCodeArgument, LogVisibility},
     provisional::CanisterSettings,
 };
+use icrc7_types::icrc3_types::{ArchiveCreateArgs, IndexType};
 use serde::Serialize;
-
-use crate::icrc3_types::{ArchiveCreateArgs, IndexType};
 
 pub const ARCHIVE_WASM: &[u8] =
     std::include_bytes!("./../../icrc7_archive/wasm/icrc7_archive.wasm.gz");

@@ -1,12 +1,11 @@
 use ic_cdk_macros::update;
-
+use icrc7_types::icrc37_types::{
+    ApproveCollectionArg, ApproveCollectionResult, ApproveTokenArg, ApproveTokenResult,
+    RevokeCollectionApprovalArg, RevokeCollectionApprovalResult, RevokeTokenApprovalArg,
+    RevokeTokenApprovalResult, TransferFromArg, TransferFromResult,
+};
 use crate::{
     guards::authenticated_guard,
-    icrc37_types::{
-        ApproveCollectionArg, ApproveCollectionResult, ApproveTokenArg, ApproveTokenResult,
-        RevokeCollectionApprovalArg, RevokeCollectionApprovalResult, RevokeTokenApprovalArg,
-        RevokeTokenApprovalResult, TransferFromArg, TransferFromResult,
-    },
     state::STATE,
 };
 
